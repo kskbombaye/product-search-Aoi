@@ -1,5 +1,5 @@
 // キャッシュ名（バージョン管理）
-const CACHE_NAME = "gcp-search-v1";
+const CACHE_NAME = "gcp-search-v2";  // ★ v1 → v2 に変更
 
 // キャッシュするファイル一覧
 const urlsToCache = [
@@ -10,7 +10,6 @@ const urlsToCache = [
   "icon-512.png"
 ];
 
-// インストール時：必要ファイルをキャッシュ
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
@@ -19,7 +18,6 @@ self.addEventListener("install", event => {
   );
 });
 
-// リクエスト時：キャッシュ優先で返す（オフライン対応）
 self.addEventListener("fetch", event => {
   event.respondWith(
     caches.match(event.request).then(response => {
@@ -28,7 +26,6 @@ self.addEventListener("fetch", event => {
   );
 });
 
-// 新バージョン適用時：古いキャッシュを削除
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys => {
