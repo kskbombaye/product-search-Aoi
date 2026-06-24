@@ -132,14 +132,20 @@ function searchJAN(jan) {
         resultArea.innerHTML = `<div class="result-card">該当なし</div>`;
         return;
     }
-
     resultArea.innerHTML = `
-        <div class="result-card">
-            <div class="result-item">商品名：${hit[1]}</div>
-            <div class="result-item">規格：${hit[2]}</div>
-            <div class="result-item">値引：${hit[3]}</div>
-            <div class="result-item">期間：${hit[4]}</div>
-        </div>
+    <div class="result-card">
+        <div class="result-item">商品名：${hit[1]}</div>
+        <div class="result-item">規格：${hit[2]}</div>
+
+        ${hit[3] && hit[3] !== "-" ? `<div class="result-item">値引：${hit[3]}円</div>` : ""}
+        ${hit[4] && hit[4] !== "-" ? `<div class="result-item">値引期間：${hit[4]}</div>` : ""}
+
+        ${hit[5] && hit[5] !== "-" ? `<div class="result-item">プラスポイント：${hit[5]}pt</div>` : ""}
+        ${hit[6] && hit[6] !== "-" ? `<div class="result-item">PP期間：${hit[6]}</div>` : ""}
+
+        ${hit[7] && hit[7] !== "-" ? `<div class="result-item">ポイント倍率：${hit[7]}倍</div>` : ""}
+        ${hit[8] && hit[8] !== "-" ? `<div class="result-item">倍期間：${hit[8]}</div>` : ""}
+    </div>
     `;
 }
 
