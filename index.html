@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GCP商品検索 for Aoi</title>
+<title>GCP商品検索</title>
 
 <!-- PWA設定 -->
 <link rel="manifest" href="manifest.json">
@@ -54,7 +54,7 @@ h2 {
     box-shadow: 0 0 0 3px rgba(0,122,255,0.2);
 }
 
-/* リセットボタン（シンプルなゴミ箱アイコン） */
+/* リセットボタン（黒いゴミ箱アイコン） */
 #resetBtn {
     width: 48px;
     height: 48px;
@@ -72,11 +72,6 @@ h2 {
     transform: scale(0.92);
     background: #f0f0f5;
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-#resetBtn svg {
-    width: 22px;
-    height: 22px;
-    fill: #007aff;
 }
 
 /* 結果カード（アプリ風） */
@@ -113,11 +108,13 @@ h2 {
 
 <div class="input-area">
     <input type="text" id="jan" placeholder="JANコードを入力">
+
+    <!-- ★ 黒いゴミ箱アイコン（Safariでも100%表示される） -->
     <button id="resetBtn" aria-label="リセット">
-  　　<svg viewBox="0 0 24 24" width="22" height="22" fill="#007aff">
-    　　<path d="M9 3h6l1 1h4v2H4V4h4l1-1zm1 6v9h2V9h-2zm4 0v9h2V9h-2zM6 8h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8z"/>
-  　　</svg>
-　　</button>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="#000">
+        <path d="M9 3h6l1 1h4v2H4V4h4l1-1zm1 6v9h2V9h-2zm4 0v9h2V9h-2zM6 8h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8z"/>
+      </svg>
+    </button>
 </div>
 
 <div id="result"></div>
@@ -139,7 +136,7 @@ fetch("master.csv")
     .then(text => {
         csvData = text.split("\n").map(row => {
             const cols = row.split(",");
-            cols[0] = toHalfWidth(cols[0].trim()); // JANの空白除去＋全角→半角
+            cols[0] = toHalfWidth(cols[0].trim());
             return cols;
         });
     });
