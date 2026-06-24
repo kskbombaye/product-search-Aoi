@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GCP対象商品検索</title>
+<title>GCP商品検索</title>
+
+<!-- PWA設定 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
 
 <style>
 /* 全体（iOS風） */
@@ -82,7 +86,7 @@ body {
 
 <body>
 
-<h2>JAN検索</h2>
+<h2>GCP商品検索</h2>
 
 <div class="label">JANコード</div>
 
@@ -150,6 +154,11 @@ function keepFocusWithoutKeyboard(input) {
     setTimeout(() => {
         input.readOnly = false;
     }, 50);
+}
+
+// PWA Service Worker登録
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
 }
 </script>
 
