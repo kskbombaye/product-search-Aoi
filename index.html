@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GCP商品検索</title>
+<title>GCP対象商品検索</title>
 
 <!-- PWA設定 -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
 
 <style>
-/* 全体（iOS風） */
 body {
     background: #f2f2f7;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -18,14 +17,12 @@ body {
     color: #333;
 }
 
-/* ラベル */
 .label {
     font-size: 14px;
     color: #555;
     margin-bottom: 6px;
 }
 
-/* 入力欄＋リセットボタン */
 .input-area {
     display: flex;
     align-items: center;
@@ -33,7 +30,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* 入力欄 */
 #jan {
     flex: 1;
     padding: 12px 14px;
@@ -48,7 +44,6 @@ body {
     border-color: #007aff;
 }
 
-/* リセットボタン */
 #resetBtn {
     background: none;
     border: none;
@@ -62,7 +57,6 @@ body {
     background: rgba(0, 122, 255, 0.1);
 }
 
-/* 結果カード */
 .result-card {
     background: #fff;
     border-radius: 12px;
@@ -71,7 +65,6 @@ body {
     border: 1px solid #e5e5ea;
 }
 
-/* 結果項目 */
 .result-item {
     font-size: 16px;
     padding: 6px 0;
@@ -101,19 +94,32 @@ body {
 // CSVデータ格納用
 let csvData = [];
 
-// CSV読み込み
+// 全角→半角変換
+function toHalfWidth(str) {
+    return str.replace(/[！-～]/g, s =>
+        String.fromCharCode(s.charCodeAt(0) - 0xFEE0)
+    );
+}
+
+// CSV読み込み（JAN列をtrimして正規化）
 fetch("master.csv")
     .then(res => res.text())
     .then(text => {
-        csvData = text.split("\n").map(row => row.split(","));
+        csvData = text.split("\n").map(row => {
+            const cols = row.split(",");
+            cols[0] = toHalfWidth(cols[0].trim()); // ← JANの空白除去＋全角→半角
+            return cols;
+        });
     });
 
-// 検索処理
+// 入力イベント
 document.getElementById("jan").addEventListener("input", () => {
-    const jan = document.getElementById("jan").value.trim();
+    const raw = document.getElementById("jan").value;
+    const jan = toHalfWidth(raw.trim()); // ← 入力側も正規化
     searchJAN(jan);
 });
 
+// 検索処理
 function searchJAN(jan) {
     const resultArea = document.getElementById("result");
     resultArea.innerHTML = "";
@@ -127,7 +133,6 @@ function searchJAN(jan) {
         return;
     }
 
-    // CSV列：0=JAN, 1=商品名, 2=規格, 3=値引, 4=期間
     resultArea.innerHTML = `
         <div class="result-card">
             <div class="result-item">商品名：${hit[1]}</div>
@@ -138,16 +143,15 @@ function searchJAN(jan) {
     `;
 }
 
-// リセットボタン（カーソル維持＋キーボード非表示）
+// リセットボタン（キーボード非表示）
 document.getElementById("resetBtn").addEventListener("click", () => {
     const input = document.getElementById("jan");
     input.value = "";
     document.getElementById("result").innerHTML = "";
-
     keepFocusWithoutKeyboard(input);
 });
 
-// キーボードを出さずにフォーカスを維持する関数
+// キーボードを出さずにフォーカス維持
 function keepFocusWithoutKeyboard(input) {
     input.readOnly = true;
     input.focus();
