@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCP対象商品検索</title>
+
+<style>
+/* 全体（iOS風） */
+body {
+    background: #f2f2f7;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 20px;
+    color: #333;
+}
+
+/* ラベル */
+.label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+/* 入力欄＋リセットボタン */
+.input-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* 入力欄 */
+#jan {
+    flex: 1;
+    padding: 12px 14px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #fff;
+    outline: none;
+}
+
+#jan:focus {
+    border-color: #007aff;
+}
+
+/* リセットボタン */
+#resetBtn {
+    background: none;
+    border: none;
+    color: #007aff;
+    font-size: 16px;
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+
+#resetBtn:active {
+    background: rgba(0, 122, 255, 0.1);
+}
+
+/* 結果カード */
+.result-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 10px;
+    border: 1px solid #e5e5ea;
+}
+
+/* 結果項目 */
+.result-item {
+    font-size: 16px;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+</style>
+</head>
+
+<body>
+
+<h2>JAN検索</h2>
+
+<div class="label">JANコード</div>
+
+<div class="input-area">
+    <input type="text" id="jan" placeholder="JANコードを入力">
+    <button id="resetBtn">リセット</button>
+</div>
+
+<div id="result"></div>
+
+<script>
+// CSVデータ格納用
+let csvData = [];
+
+// CSV読み込み
+fetch("master.csv")
+    .then(res => res.text())
+    .then(text => {
+        csvData = text.split("\n").map(row => row.split(","));
+    });
+
+// 検索処理
+document.getElementById("jan").addEventListener("input", () => {
+    const jan = document.getElementById("jan").value.trim();
+    searchJAN(jan);
+});
+
+function searchJAN(jan) {
+    const resultArea = document.getElementById("result");
+    resultArea.innerHTML = "";
+
+    if (jan === "") return;
+
+    const hit = csvData.find(row => row[0] === jan);
+
+    if (!hit) {
+        resultArea.innerHTML = `<div class="result-card">該当なし</div>`;
+        return;
+    }
+
+    // CSV列：0=JAN, 1=商品名, 2=規格, 3=値引, 4=期間
+    resultArea.innerHTML = `
+        <div class="result-card">
+            <div class="result-item">商品名：${hit[1]}</div>
+            <div class="result-item">規格：${hit[2]}</div>
+            <div class="result-item">値引：${hit[3]}</div>
+            <div class="result-item">期間：${hit[4]}</div>
+        </div>
+    `;
+}
+
+// リセットボタン（カーソル維持＋キーボード非表示）
+document.getElementById("resetBtn").addEventListener("click", () => {
+    const input = document.getElementById("jan");
+    input.value = "";
+    document.getElementById("result").innerHTML = "";
+
+    keepFocusWithoutKeyboard(input);
+});
+
+// キーボードを出さずにフォーカスを維持する関数
+function keepFocusWithoutKeyboard(input) {
+    input.readOnly = true;
+    input.focus();
+    setTimeout(() => {
+        input.readOnly = false;
+    }, 50);
+}
+</script>
+
+</body>
+</html>
