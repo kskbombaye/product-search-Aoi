@@ -1,5 +1,5 @@
 {
-  "name": "GCP対象商品検索",
+  "name": "GCP対象商品検索forAoi",
   "short_name": "GCP対象商品検索",
   "start_url": "index.html",
   "display": "standalone",
