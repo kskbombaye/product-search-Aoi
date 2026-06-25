@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GCP商品検索</title>
 
-<!-- PWA設定 -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
 
@@ -23,14 +22,12 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* ラベル */
 .label {
     font-size: 15px;
     color: #555;
     margin-bottom: 6px;
 }
 
-/* 入力エリア */
 .input-area {
     display: flex;
     align-items: center;
@@ -38,7 +35,6 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* 入力欄（iOS風） */
 #jan {
     flex: 1;
     padding: 14px 16px;
@@ -54,7 +50,7 @@ h2 {
     box-shadow: 0 0 0 3px rgba(0,122,255,0.2);
 }
 
-/* リセットボタン（黒いゴミ箱アイコン） */
+/* リセットボタン */
 #resetBtn {
     width: 48px;
     height: 48px;
@@ -74,7 +70,6 @@ h2 {
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-/* 結果カード（アプリ風） */
 .result-card {
     background: #ffffff;
     border-radius: 16px;
@@ -92,7 +87,6 @@ h2 {
     border-bottom: none;
 }
 
-/* アニメーション */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
@@ -109,28 +103,25 @@ h2 {
 <div class="input-area">
     <input type="text" id="jan" placeholder="JANコードを入力">
 
-    <!-- ★ 黒いゴミ箱アイコン（Safariでも100%表示される） -->
+    <!-- ★ Safari でも 100% 表示される SVG（xmlns 付き） -->
     <button id="resetBtn" aria-label="リセット">
-　　  <svg viewBox="0 0 24 24" width="22" height="22" fill="#000">
-    　　<path d="M9 3h6l1 1h4v2H4V4h4l1-1zm1 6v9h2V9h-2zm4 0v9h2V9h-2zM6 8h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8z"/>
-  　　</svg>
-　　</button>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="#000">
+        <path d="M9 3h6l1 1h4v2H4V4h4l1-1zm1 6v9h2V9h-2zm4 0v9h2V9h-2zM6 8h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8z"/>
+      </svg>
+    </button>
 </div>
 
 <div id="result"></div>
 
 <script>
-// CSVデータ格納用
 let csvData = [];
 
-// 全角→半角変換
 function toHalfWidth(str) {
     return str.replace(/[！-～]/g, s =>
         String.fromCharCode(s.charCodeAt(0) - 0xFEE0)
     );
 }
 
-// CSV読み込み（JAN列をtrimして正規化）
 fetch("master.csv")
     .then(res => res.text())
     .then(text => {
@@ -141,14 +132,12 @@ fetch("master.csv")
         });
     });
 
-// 入力イベント
 document.getElementById("jan").addEventListener("input", () => {
     const raw = document.getElementById("jan").value;
     const jan = toHalfWidth(raw.trim());
     searchJAN(jan);
 });
 
-// 検索処理
 function searchJAN(jan) {
     const resultArea = document.getElementById("result");
     resultArea.innerHTML = "";
@@ -179,7 +168,6 @@ function searchJAN(jan) {
     `;
 }
 
-// リセットボタン（キーボード非表示）
 document.getElementById("resetBtn").addEventListener("click", () => {
     const input = document.getElementById("jan");
     input.value = "";
@@ -187,7 +175,6 @@ document.getElementById("resetBtn").addEventListener("click", () => {
     keepFocusWithoutKeyboard(input);
 });
 
-// キーボードを出さずにフォーカス維持
 function keepFocusWithoutKeyboard(input) {
     input.readOnly = true;
     input.focus();
@@ -196,7 +183,6 @@ function keepFocusWithoutKeyboard(input) {
     }, 50);
 }
 
-// PWA Service Worker登録
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
 }
