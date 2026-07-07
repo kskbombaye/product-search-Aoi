@@ -1,11 +1,10 @@
 // ★ キャッシュ名（バージョン管理）
-const CACHE_NAME = "gcp-search-v4";
+const CACHE_NAME = "gcp-search-v5";  // 必ずバージョンアップすること
 
-// キャッシュするファイル一覧
+// キャッシュするファイル一覧（master.csv を除外）
 const urlsToCache = [
   "index.html",
   "manifest.json",
-  "master.csv",
   "icon-192.png",
   "icon-512.png"
 ];
@@ -18,8 +17,16 @@ self.addEventListener("install", event => {
   self.skipWaiting(); // 新しいSWを即時適用
 });
 
-// リクエスト時：キャッシュ優先
+// リクエスト時：master.csv は常に最新を取得
 self.addEventListener("fetch", event => {
+
+  // ★ master.csv はキャッシュを使わずネットワーク優先
+  if (event.request.url.includes("master.csv")) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // その他はキャッシュ優先
   event.respondWith(
     caches.match(event.request).then(response => response || fetch(event.request))
   );
