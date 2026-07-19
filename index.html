@@ -124,8 +124,7 @@ fetch("master.csv")
     .then(res => res.text())
     .then(text => {
         csvData = text.split("\n").map(row => {
-            const cols = row.split(",");
-            cols[0] = toHalfWidth(cols[0].trim());
+            const cols = row.split(",").map(c => toHalfWidth(c.trim()));
             return cols;
         });
     });
